@@ -36,7 +36,8 @@ void test_bit_xor(unsigned int x, unsigned int y) {
   }
 }
 
-int main() {
+int main(void) {
+  printf("Test started \n");
   assert(bit_to_int(bit_not(bit_from_int(1))) == 0);
   assert(bit_to_int(bit_not(bit_from_int(0))) == 1);
 

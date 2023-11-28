@@ -5,3 +5,6 @@ test_bits: test_bits.c bits.h
 
 test_numbers: test_numbers.c numbers.h bits.h
 	gcc -o test_numbers test_numbers.c $(CFLAGS)
+
+clean:
+	rm -f test_bits test_numbers

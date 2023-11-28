@@ -64,27 +64,28 @@ struct bits8 bits8_add(struct bits8 x, struct bits8 y) {
   
 
   c.b0.v = false;
+  
   result.b0 = bit_xor(x.b0,y.b0);
   
-  c.b1 = bit_or(bit_and(x.b1,y.b1),bit_and(bit_or(x.b1,y.b1),c.b0));
+  c.b1 = bit_and(x.b0,y.b0);
   result.b1 = bit_xor(c.b1,bit_xor(x.b1,y.b1));
 
-  c.b2 = bit_or(bit_and(x.b2,y.b2),bit_and(bit_or(x.b2,y.b2),c.b1));
+  c.b2 = bit_or(bit_and(x.b1,y.b1),bit_and(bit_or(x.b1,y.b1),c.b1));
   result.b2 = bit_xor(c.b2,bit_xor(x.b2,y.b2));
 
-  c.b3 = bit_or(bit_and(x.b3,y.b3),bit_and(bit_or(x.b3,y.b3),c.b2));
+  c.b3 = bit_or(bit_and(x.b2,y.b2),bit_and(bit_or(x.b2,y.b2),c.b2));
   result.b3 = bit_xor(c.b3,bit_xor(x.b3,y.b3));
 
-  c.b4 = bit_or(bit_and(x.b4,y.b4),bit_and(bit_or(x.b4,y.b4),c.b3));
+  c.b4 = bit_or(bit_and(x.b3,y.b3),bit_and(bit_or(x.b3,y.b3),c.b3));
   result.b4 = bit_xor(c.b4,bit_xor(x.b4,y.b4));
 
-  c.b5 = bit_or(bit_and(x.b5,y.b5),bit_and(bit_or(x.b5,y.b5),c.b4));
+  c.b5 = bit_or(bit_and(x.b4,y.b4),bit_and(bit_or(x.b4,y.b4),c.b4));
   result.b5 = bit_xor(c.b5,bit_xor(x.b5,y.b5));
 
-  c.b6 = bit_or(bit_and(x.b6,y.b6),bit_and(bit_or(x.b6,y.b6),c.b5));
+  c.b6 = bit_or(bit_and(x.b5,y.b5),bit_and(bit_or(x.b5,y.b5),c.b5));
   result.b6 = bit_xor(c.b6,bit_xor(x.b6,y.b6));
 
-  c.b7 = bit_or(bit_and(x.b7,y.b7),bit_and(bit_or(x.b7,y.b7),c.b6));
+  c.b7 = bit_or(bit_and(x.b6,y.b6),bit_and(bit_or(x.b6,y.b6),c.b6));
   result.b7 = bit_xor(c.b7,bit_xor(x.b7,y.b7));
 
   return result;
@@ -134,6 +135,26 @@ struct bits8 bits8_negate(struct bits8 x) {
 
   return bits8_increment(result);
 }
+
+struct bits8 bits8_and(struct bits8 x, struct bit y) {
+  struct bits8 result;
+  struct bits8 y_byte;
+
+  y_byte = bits8_negate(bits8_from_int(bit_to_int(y)));
+
+  result.b0 = bit_and(y_byte.b0, x.b0);
+  result.b1 = bit_and(y_byte.b1, x.b1);
+  result.b2 = bit_and(y_byte.b2, x.b2);
+  result.b3 = bit_and(y_byte.b3, x.b3);
+  result.b4 = bit_and(y_byte.b4, x.b4);
+  result.b5 = bit_and(y_byte.b5, x.b5);
+  result.b6 = bit_and(y_byte.b6, x.b6);
+  result.b7 = bit_and(y_byte.b7, x.b7);
+
+  return result;
+
+}
+
 struct bits8 bits8_mul(struct bits8 x, struct bits8 y) {
     
   struct bits8 sum;
@@ -141,36 +162,36 @@ struct bits8 bits8_mul(struct bits8 x, struct bits8 y) {
   sum = bits8_emptyBits8();
 
   // i = 0
-  helper = ((bits8_to_int(x) & bit_to_int(y.b0)) >> 2);
-  sum = bits8_add(bits8_from_int(helper), sum);
 
-  // i = 1
-  helper = ((bits8_to_int(x) & bit_to_int(y.b1)) >> 2^1);
-  sum = bits8_add(bits8_from_int(helper), sum);
+    helper = bits8_to_int(bits8_and(x,y.b0));
+    sum = bits8_add(bits8_from_int(helper), sum);
 
-  // i = 2
-  helper = ((bits8_to_int(x) & bit_to_int(y.b2)) >> 2^2);
-  sum = bits8_add(bits8_from_int(helper), sum);
+    // i = 1, shift x by 1 position if y.b1 is 1
+    helper = (bits8_to_int(bits8_and(x,y.b1)) << 1);
+    sum = bits8_add(bits8_from_int(helper), sum);
 
-  // i = 3
-  helper = ((bits8_to_int(x) & bit_to_int(y.b3)) >> 2^3);
-  sum = bits8_add(bits8_from_int(helper), sum);
+    // i = 2, shift x by 2 positions if y.b2 is 1
+    helper = (bits8_to_int(bits8_and(x,y.b2)) << 2);
+    sum = bits8_add(bits8_from_int(helper), sum);
 
-  // i = 4
-  helper = ((bits8_to_int(x) & bit_to_int(y.b4)) >> 2^4);
-  sum = bits8_add(bits8_from_int(helper), sum);
+    // i = 3, shift x by 3 positions if y.b3 is 1
+    helper = (bits8_to_int(bits8_and(x,y.b3)) << 3);
+    sum = bits8_add(bits8_from_int(helper), sum);
 
-  // i = 5
-  helper = ((bits8_to_int(x) & bit_to_int(y.b5)) >> 2^5);
-  sum = bits8_add(bits8_from_int(helper), sum);
+    // i = 4, shift x by 4 positions if y.b4 is 1
+    helper = (bits8_to_int(bits8_and(x,y.b4)) << 4);
+    sum = bits8_add(bits8_from_int(helper), sum);
 
-  // i = 6
-  helper = ((bits8_to_int(x) & bit_to_int(y.b6)) >> 2^6);
-  sum = bits8_add(bits8_from_int(helper), sum);
+    // i = 5, shift x by 5 positions if y.b5 is 1
+    helper = (bits8_to_int(bits8_and(x,y.b5)) << 5);
+    sum = bits8_add(bits8_from_int(helper), sum);
 
-  // i = 7
-  helper = ((bits8_to_int(x) & bit_to_int(y.b7)) >> 2^7);
-  sum = bits8_add(bits8_from_int(helper), sum);
+    // i = 6, shift x by 6 positions if y.b6 is 1
+    helper = (bits8_to_int(bits8_and(x,y.b6)) << 6);
+    sum = bits8_add(bits8_from_int(helper), sum);
 
+    // i = 7, shift x by 7 positions if y.b7 is 1
+    helper = (bits8_to_int(bits8_and(x,y.b7)) << 7);
+    sum = bits8_add(bits8_from_int(helper), sum);
   return sum;
 }
