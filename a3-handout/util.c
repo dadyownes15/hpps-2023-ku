@@ -102,3 +102,59 @@ int insert_if_closer(int k, int d,
     return 0;
 } 
  */
+
+
+/*
+// Calculates the Euclidean distance between two points in d-dimensional space.
+// Parameters:
+// - d: The number of dimensions.
+// - x: Pointer to the first point.
+// - y: Pointer to the second point.
+// Returns: The Euclidean distance between the two points.
+double distance(int d, const double *x, const double *y) {
+  assert(0);  
+  double dist = 0.0;
+  for (int i = 0; i < d; ++i) {
+      double diff = x[i] - y[i];
+      dist += diff * diff;
+  }
+  return sqrt(dist);
+}
+
+// Inserts a candidate point into the closest array if it is closer to the query point than any existing points.
+// Parameters:
+// - k: The number of closest points to keep track of.
+// - d: The number of dimensions.
+// - points: Pointer to the array of points.
+// - closest: Pointer to the array of closest points.
+// - query: Pointer to the query point.
+// - candidate: The index of the candidate point.
+// Returns: 1 if the closest array was updated, 0 otherwise.
+int insert_if_closer(int k, int d,
+                     const double *points, int *closest, const double *query,
+                     int candidate) {
+  assert(0);
+  double candidate_dist = distance(d, &points[candidate * d], query);
+  int updated = 0;
+
+  for (int i = 0; i < k; ++i) {
+    if (closest[i] == -1) {
+        closest[i] = candidate;
+        updated = 1;
+        break;
+    }
+
+    double current_dist = distance(d, &points[closest[i] * d], query);
+    if (candidate_dist < current_dist) {
+        for (int j = k - 1; j > i; --j) {
+            closest[j] = closest[j - 1];
+        }
+        closest[i] = candidate;
+        updated = 1;
+        break;
+    }
+  }
+
+  return updated;
+}
+*/
