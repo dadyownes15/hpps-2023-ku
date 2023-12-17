@@ -58,8 +58,8 @@ int insert_if_closer(int k, int d,
     hpps_quicksort(closest, k, sizeof(int),
                     (int (*)(const void*, const void*, void*))cmp_distances,
                     &env);
-  
-
+    
+    
       const double *candiate = &points[candidate];
       const double *worst_closest = &points[closest[k-1]];
       const double *q = &query[0];

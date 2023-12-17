@@ -186,27 +186,19 @@ void kdtree_knn_node(const struct kdtree *tree, int k, const double* query,
   int closest_is_full =   check_if_closest_is_full(closest,k);
 
   if (node == NULL) {
-    printf("case 1");
     return;
   } else if (closest_is_full != 0) {
-    
-    printf("case 2\n");
-    printf("closest_length: %i,\n k: %i, \n", closest_length,k);
-
     closest[closest_is_full] = node->point_index;
   } else {
-    int updated = insert_if_closer(k,tree->d,tree->points,closest,query,node->point_index);
-
-    if (updated == 1) {
-      printf("updated");
-    }
+    insert_if_closer(k,tree->d,tree->points,closest,query,node->point_index);
   }
 
   double diff = tree->points[node->point_index+node->axis] - query[node->axis];
   
   //assumes the most_distance_node is that last node in closets.
-  double most_distance_node = tree->points[closest[closest_length-1]];
-  double radius_distance = distance(tree->d,&most_distance_node,query);
+  //double most_distance_node = tree->points[closest[closest_length-1]];
+  
+  double radius_distance = distance(tree->d,&tree->points[closest[closest_length-1]],query);
   radius = &radius_distance;
 
   if (diff >= 0 || radius_distance > fabs(diff)){

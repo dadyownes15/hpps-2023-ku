@@ -2,6 +2,10 @@ CC?=gcc
 CFLAGS?=-Wextra -Wall -pedantic -std=c99 -g
 LDFLAGS?=-lm
 
+readpoints: readpoints.c io.o
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+
 all: sort-example knn-bruteforce knn-svg knn-kdtree knn-genpoints
 
 sort-example: sort-example.o sort.o
